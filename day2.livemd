@@ -6,7 +6,7 @@ Mix.install([
 ])
 ```
 
-## With test data
+## Small dataset
 
 ```elixir
 games = "A Y
@@ -36,6 +36,8 @@ end
 
 games |> Enum.map(&Game.play/1) |> Enum.sum()
 ```
+
+## Large dataset
 
 ```elixir
 input = Kino.Input.textarea("Please add your input from Advent of Code")
@@ -88,4 +90,77 @@ end
 
 games |> Enum.map(&Game.play/1) |> Enum.sum()
 all_games |> Enum.map(&Game.play/1) |> Enum.sum()
+```
+
+## Refactor attempt
+
+This code is probably better, as the intent is more explicit. But it's also longer and more verbose. Keeping both variants for reference.
+
+```elixir
+defmodule Formatter do
+  # A = Rock, B = Paper, C = Scissors
+  defp player(str) do
+    case str do
+      "A" -> :rock
+      "B" -> :paper
+      "C" -> :scissors
+    end
+  end
+
+  # X = lose, Y = draw, Z = win
+  defp outcome(str) do
+    case str do
+      "X" -> :lose
+      "Y" -> :draw
+      "Z" -> :win
+    end
+  end
+
+  def format([player1, outcome]), do: [player(player1), outcome(outcome)]
+end
+
+defmodule Game do
+  @rock_value 1
+  @paper_value 2
+  @scissors_value 3
+
+  defp outcome([_, :lose]), do: 0
+  defp outcome([_, :draw]), do: 3
+  defp outcome([_, :win]), do: 6
+
+  defp get_value(game) do
+    case game do
+      [:rock, :lose] -> @scissors_value
+      [:rock, :draw] -> @rock_value
+      [:rock, :win] -> @paper_value
+      [:paper, :lose] -> @rock_value
+      [:paper, :draw] -> @paper_value
+      [:paper, :win] -> @scissors_value
+      [:scissors, :lose] -> @paper_value
+      [:scissors, :draw] -> @scissors_value
+      [:scissors, :win] -> @rock_value
+    end
+  end
+
+  def play(game), do: outcome(game) + get_value(game)
+end
+
+small_set =
+  "A Y
+B X
+C Z"
+  |> String.split("\n")
+  |> Enum.map(fn str -> String.split(str, " ") end)
+  |> Enum.map(&Formatter.format/1)
+  |> Enum.map(&Game.play/1)
+  |> Enum.sum()
+
+large_set =
+  input
+  |> Kino.Input.read()
+  |> String.split("\n")
+  |> Enum.map(fn str -> String.split(str, " ") end)
+  |> Enum.map(&Formatter.format/1)
+  |> Enum.map(&Game.play/1)
+  |> Enum.sum()
 ```
