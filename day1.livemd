@@ -1,0 +1,62 @@
+# Advent of Code 2022
+
+## Start small, with copy-paste
+
+```elixir
+input_small = "1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000"
+
+sum_calories = fn str ->
+  String.split(str)
+  |> Enum.map(&String.to_integer/1)
+  |> Enum.sum()
+end
+
+input_small
+|> String.split("\n\n")
+|> Enum.map(sum_calories)
+|> Enum.max()
+```
+
+## Load all data
+
+```elixir
+input_file = File.read!("#{__DIR__}/day1-input.txt")
+
+input_file
+|> String.split("\n\n")
+|> Enum.map(sum_calories)
+|> Enum.max()
+```
+
+## Part 2
+
+```elixir
+input_small
+|> String.split("\n\n")
+|> Enum.map(sum_calories)
+|> Enum.sort()
+|> Enum.take(-3)
+|> Enum.sum()
+```
+
+```elixir
+input_file
+|> String.split("\n\n")
+|> Enum.map(sum_calories)
+|> Enum.sort()
+|> Enum.take(-3)
+|> Enum.sum()
+```
