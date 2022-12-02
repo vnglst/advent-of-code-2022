@@ -1,0 +1,83 @@
+# Day 2
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.7.0"}
+])
+```
+
+## With test data
+
+```elixir
+games = "A Y
+B X
+C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
+
+defmodule Game do
+  # A = Rock, B = Paper, C = Scissors
+  # X = Rock, Y = Paper, Z = Scissors
+  defp outcome(["A", "X"]), do: 3
+  defp outcome(["A", "Y"]), do: 6
+  defp outcome(["A", "Z"]), do: 0
+  defp outcome(["B", "X"]), do: 0
+  defp outcome(["B", "Y"]), do: 3
+  defp outcome(["B", "Z"]), do: 6
+  defp outcome(["C", "X"]), do: 6
+  defp outcome(["C", "Y"]), do: 0
+  defp outcome(["C", "Z"]), do: 3
+
+  # X = Rock = 1, Y = Paper = 2, C = Scissors = 3
+  defp basis([_, "X"]), do: 1
+  defp basis([_, "Y"]), do: 2
+  defp basis([_, "Z"]), do: 3
+
+  def play(game), do: basis(game) + outcome(game)
+end
+
+games |> Enum.map(&Game.play/1) |> Enum.sum()
+```
+
+```elixir
+input = Kino.Input.textarea("Please add your input from Advent of Code")
+```
+
+```elixir
+all_games =
+  input
+  |> Kino.Input.read()
+  |> String.split("\n")
+  |> Enum.map(fn str -> String.split(str, " ") end)
+
+all_games |> Enum.map(&Game.play/1) |> Enum.sum()
+```
+
+## Part 2
+
+```elixir
+games = "A Y
+B X
+C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
+
+defmodule Game do
+  @rock_value 1
+  @paper_value 2
+  @scissors_value 3
+
+  # A = Rock, B = Paper, C = Scissors
+  # X = lose, Y = draw, Z = win
+  defp outcome(["A", "X"]), do: 0 + @scissors_value
+  defp outcome(["A", "Y"]), do: 3 + @rock_value
+  defp outcome(["A", "Z"]), do: 6 + @paper_value
+  defp outcome(["B", "X"]), do: 0 + @rock_value
+  defp outcome(["B", "Y"]), do: 3 + @paper_value
+  defp outcome(["B", "Z"]), do: 6 + @scissors_value
+  defp outcome(["C", "X"]), do: 0 + @paper_value
+  defp outcome(["C", "Y"]), do: 3 + @scissors_value
+  defp outcome(["C", "Z"]), do: 6 + @rock_value
+
+  def play(game), do: outcome(game)
+end
+
+games |> Enum.map(&Game.play/1) |> Enum.sum()
+all_games |> Enum.map(&Game.play/1) |> Enum.sum()
+```
