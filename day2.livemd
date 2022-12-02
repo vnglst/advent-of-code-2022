@@ -13,7 +13,7 @@ games = "A Y
 B X
 C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
 
-defmodule Game do
+defmodule Game_1a do
   # A = Rock, B = Paper, C = Scissors
   # X = Rock, Y = Paper, Z = Scissors
   defp outcome(["A", "X"]), do: 3
@@ -34,7 +34,7 @@ defmodule Game do
   def play(game), do: basis(game) + outcome(game)
 end
 
-games |> Enum.map(&Game.play/1) |> Enum.sum()
+games |> Enum.map(&Game_1a.play/1) |> Enum.sum()
 ```
 
 ## Large dataset
@@ -50,7 +50,7 @@ all_games =
   |> String.split("\n")
   |> Enum.map(fn str -> String.split(str, " ") end)
 
-all_games |> Enum.map(&Game.play/1) |> Enum.sum()
+all_games |> Enum.map(&Game_1a.play/1) |> Enum.sum()
 ```
 
 ## Part 2
@@ -60,7 +60,7 @@ games = "A Y
 B X
 C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
 
-defmodule Game do
+defmodule Game_2a do
   @rock_value 1
   @paper_value 2
   @scissors_value 3
@@ -88,16 +88,84 @@ defmodule Game do
   def play(game), do: outcome(game) + get_value(game)
 end
 
-games |> Enum.map(&Game.play/1) |> Enum.sum()
-all_games |> Enum.map(&Game.play/1) |> Enum.sum()
+games |> Enum.map(&Game_2a.play/1) |> Enum.sum()
+all_games |> Enum.map(&Game_2a.play/1) |> Enum.sum()
 ```
 
-## Refactor attempt
+## Refactor (of part 1)
 
 This code is probably better, as the intent is more explicit. But it's also longer and more verbose. Keeping both variants for reference.
 
 ```elixir
-defmodule Formatter do
+defmodule Formatter_1b do
+  defp player(str) do
+    case str do
+      "A" -> :rock
+      "B" -> :paper
+      "C" -> :scissors
+    end
+  end
+
+  defp outcome(str) do
+    case str do
+      "X" -> :rock
+      "Y" -> :paper
+      "Z" -> :scissors
+    end
+  end
+
+  def format([player1, outcome]), do: [player(player1), outcome(outcome)]
+end
+
+defmodule Game_1b do
+  @lose 0
+  @draw 3
+  @win 6
+
+  defp outcome([p1, p2]) when p1 == p2, do: @draw
+
+  defp outcome([p1, p2]) do
+    case [p1, p2] do
+      [:rock, :paper] -> @win
+      [:rock, :scissors] -> @lose
+      [:paper, :scissors] -> @win
+      [:paper, :rock] -> @lose
+      [:scissors, :rock] -> @win
+      [:scissors, :paper] -> @lose
+    end
+  end
+
+  defp basis([_, :rock]), do: 1
+  defp basis([_, :paper]), do: 2
+  defp basis([_, :scissors]), do: 3
+
+  def play(game), do: basis(game) + outcome(game)
+end
+
+small_set =
+  "A Y
+B X
+C Z"
+  |> String.split("\n")
+  |> Enum.map(fn str -> String.split(str, " ") end)
+  |> Enum.map(&Formatter_1b.format/1)
+  |> Enum.map(&Game_1b.play/1)
+  |> Enum.sum()
+
+all_games =
+  input
+  |> Kino.Input.read()
+  |> String.split("\n")
+  |> Enum.map(fn str -> String.split(str, " ") end)
+  |> Enum.map(&Formatter_1b.format/1)
+  |> Enum.map(&Game_1b.play/1)
+  |> Enum.sum()
+```
+
+## Refactor (of part 2)
+
+```elixir
+defmodule Formatter_2b do
   # A = Rock, B = Paper, C = Scissors
   defp player(str) do
     case str do
@@ -119,7 +187,7 @@ defmodule Formatter do
   def format([player1, outcome]), do: [player(player1), outcome(outcome)]
 end
 
-defmodule Game do
+defmodule Game_2b do
   @rock_value 1
   @paper_value 2
   @scissors_value 3
@@ -151,8 +219,8 @@ B X
 C Z"
   |> String.split("\n")
   |> Enum.map(fn str -> String.split(str, " ") end)
-  |> Enum.map(&Formatter.format/1)
-  |> Enum.map(&Game.play/1)
+  |> Enum.map(&Formatter_2b.format/1)
+  |> Enum.map(&Game_2b.play/1)
   |> Enum.sum()
 
 large_set =
@@ -160,7 +228,7 @@ large_set =
   |> Kino.Input.read()
   |> String.split("\n")
   |> Enum.map(fn str -> String.split(str, " ") end)
-  |> Enum.map(&Formatter.format/1)
-  |> Enum.map(&Game.play/1)
+  |> Enum.map(&Formatter_2b.format/1)
+  |> Enum.map(&Game_2b.play/1)
   |> Enum.sum()
 ```
