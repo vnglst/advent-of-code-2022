@@ -6,7 +6,7 @@ Mix.install([
 ])
 ```
 
-## Small dataset
+## Part 1, small dataset
 
 ```elixir
 games = "A Y
@@ -14,22 +14,33 @@ B X
 C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
 
 defmodule Game_1a do
+  @win 6
+  @draw 3
+  @lose 0
+
   # A = Rock, B = Paper, C = Scissors
   # X = Rock, Y = Paper, Z = Scissors
-  defp outcome(["A", "X"]), do: 3
-  defp outcome(["A", "Y"]), do: 6
-  defp outcome(["A", "Z"]), do: 0
-  defp outcome(["B", "X"]), do: 0
-  defp outcome(["B", "Y"]), do: 3
-  defp outcome(["B", "Z"]), do: 6
-  defp outcome(["C", "X"]), do: 6
-  defp outcome(["C", "Y"]), do: 0
-  defp outcome(["C", "Z"]), do: 3
+  defp outcome(game) do
+    case game do
+      ["A", "X"] -> @draw
+      ["A", "Y"] -> @win
+      ["A", "Z"] -> @lose
+      ["B", "X"] -> @lose
+      ["B", "Y"] -> @draw
+      ["B", "Z"] -> @win
+      ["C", "X"] -> @win
+      ["C", "Y"] -> @lose
+      ["C", "Z"] -> @draw
+    end
+  end
 
-  # X = Rock = 1, Y = Paper = 2, C = Scissors = 3
-  defp basis([_, "X"]), do: 1
-  defp basis([_, "Y"]), do: 2
-  defp basis([_, "Z"]), do: 3
+  @rock 1
+  @paper 2
+  @scissors 3
+
+  defp basis([_, "X"]), do: @rock
+  defp basis([_, "Y"]), do: @paper
+  defp basis([_, "Z"]), do: @scissors
 
   def play(game), do: basis(game) + outcome(game)
 end
@@ -37,7 +48,7 @@ end
 games |> Enum.map(&Game_1a.play/1) |> Enum.sum()
 ```
 
-## Large dataset
+## Part 1, large dataset
 
 ```elixir
 input = Kino.Input.textarea("Please add your input from Advent of Code")
@@ -61,27 +72,31 @@ B X
 C Z" |> String.split("\n") |> Enum.map(fn str -> String.split(str, " ") end)
 
 defmodule Game_2a do
-  @rock_value 1
-  @paper_value 2
-  @scissors_value 3
+  @win 6
+  @draw 3
+  @lose 0
 
   # X = lose, Y = draw, Z = win
-  defp outcome([_, "X"]), do: 0
-  defp outcome([_, "Y"]), do: 3
-  defp outcome([_, "Z"]), do: 6
+  defp outcome([_, "X"]), do: @lose
+  defp outcome([_, "Y"]), do: @draw
+  defp outcome([_, "Z"]), do: @win
+
+  @rock 1
+  @paper 2
+  @scissors 3
 
   # A = Rock, B = Paper, C = Scissors
   defp get_value(game) do
     case game do
-      ["A", "X"] -> @scissors_value
-      ["A", "Y"] -> @rock_value
-      ["A", "Z"] -> @paper_value
-      ["B", "X"] -> @rock_value
-      ["B", "Y"] -> @paper_value
-      ["B", "Z"] -> @scissors_value
-      ["C", "X"] -> @paper_value
-      ["C", "Y"] -> @scissors_value
-      ["C", "Z"] -> @rock_value
+      ["A", "X"] -> @scissors
+      ["A", "Y"] -> @rock
+      ["A", "Z"] -> @paper
+      ["B", "X"] -> @rock
+      ["B", "Y"] -> @paper
+      ["B", "Z"] -> @scissors
+      ["C", "X"] -> @paper
+      ["C", "Y"] -> @scissors
+      ["C", "Z"] -> @rock
     end
   end
 
