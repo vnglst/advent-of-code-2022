@@ -63,19 +63,27 @@ defmodule Game do
   @paper_value 2
   @scissors_value 3
 
-  # A = Rock, B = Paper, C = Scissors
   # X = lose, Y = draw, Z = win
-  defp outcome(["A", "X"]), do: 0 + @scissors_value
-  defp outcome(["A", "Y"]), do: 3 + @rock_value
-  defp outcome(["A", "Z"]), do: 6 + @paper_value
-  defp outcome(["B", "X"]), do: 0 + @rock_value
-  defp outcome(["B", "Y"]), do: 3 + @paper_value
-  defp outcome(["B", "Z"]), do: 6 + @scissors_value
-  defp outcome(["C", "X"]), do: 0 + @paper_value
-  defp outcome(["C", "Y"]), do: 3 + @scissors_value
-  defp outcome(["C", "Z"]), do: 6 + @rock_value
+  defp outcome([_, "X"]), do: 0
+  defp outcome([_, "Y"]), do: 3
+  defp outcome([_, "Z"]), do: 6
 
-  def play(game), do: outcome(game)
+  # A = Rock, B = Paper, C = Scissors
+  defp get_value(game) do
+    case game do
+      ["A", "X"] -> @scissors_value
+      ["A", "Y"] -> @rock_value
+      ["A", "Z"] -> @paper_value
+      ["B", "X"] -> @rock_value
+      ["B", "Y"] -> @paper_value
+      ["B", "Z"] -> @scissors_value
+      ["C", "X"] -> @paper_value
+      ["C", "Y"] -> @scissors_value
+      ["C", "Z"] -> @rock_value
+    end
+  end
+
+  def play(game), do: outcome(game) + get_value(game)
 end
 
 games |> Enum.map(&Game.play/1) |> Enum.sum()
