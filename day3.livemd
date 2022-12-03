@@ -1,0 +1,73 @@
+# Day 3
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.7.0"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Section
+
+```elixir
+input = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw" |> String.split("\n")
+
+defmodule Str do
+  def split_in_two(s) do
+    len = String.length(s)
+    half_len = div(len, 2)
+    [String.slice(s, 0..half_len), String.slice(s, half_len..len)]
+  end
+
+  def first_common_char([s1, s2]) do
+    s1
+    |> String.codepoints()
+    |> Enum.find(fn char -> String.contains?(s2, char) end)
+  end
+
+  def score(<<lower::utf8>>) when lower in ?a..?z, do: lower - ?a + 1
+  def score(<<upper::utf8>>) when upper in ?A..?Z, do: upper - ?A + 27
+end
+
+input
+|> Enum.map(&Str.split_in_two/1)
+|> Enum.map(&Str.first_common_char/1)
+|> Enum.map(&Str.score/1)
+|> Enum.sum()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+157
+```
+
+```elixir
+input = Kino.Input.textarea("Please add your input from Advent of Code")
+```
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n")
+|> Enum.map(&Str.split_in_two/1)
+|> Enum.map(&Str.first_common_char/1)
+|> Enum.map(&Str.score/1)
+|> Enum.sum()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+8185
+```
