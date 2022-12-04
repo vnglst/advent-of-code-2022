@@ -6,13 +6,7 @@ Mix.install([
 ])
 ```
 
-<!-- livebook:{"output":true} -->
-
-```
-:ok
-```
-
-## Section
+## Part 1
 
 ```elixir
 input = "vJrwpWtwJgWrhcsFMMfFFhFp
@@ -35,21 +29,15 @@ defmodule Str do
     |> Enum.find(fn char -> String.contains?(s2, char) end)
   end
 
-  def score(<<lower::utf8>>) when lower in ?a..?z, do: lower - ?a + 1
-  def score(<<upper::utf8>>) when upper in ?A..?Z, do: upper - ?A + 27
+  def priority(<<lower::utf8>>) when lower in ?a..?z, do: lower - ?a + 1
+  def priority(<<upper::utf8>>) when upper in ?A..?Z, do: upper - ?A + 27
 end
 
 input
 |> Enum.map(&Str.split_in_two/1)
 |> Enum.map(&Str.first_common_char/1)
-|> Enum.map(&Str.score/1)
+|> Enum.map(&Str.priority/1)
 |> Enum.sum()
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-157
 ```
 
 ```elixir
@@ -62,12 +50,38 @@ input
 |> String.split("\n")
 |> Enum.map(&Str.split_in_two/1)
 |> Enum.map(&Str.first_common_char/1)
-|> Enum.map(&Str.score/1)
+|> Enum.map(&Str.priority/1)
 |> Enum.sum()
 ```
 
-<!-- livebook:{"output":true} -->
+## Part 2
 
-```
-8185
+```elixir
+"vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw"
+|> String.split("\n")
+|> Enum.map(&String.split(&1, "", trim: true))
+|> Enum.map(&MapSet.new/1)
+|> Enum.chunk_every(3)
+|> Enum.flat_map(fn group ->
+  Enum.reduce(group, &MapSet.intersection/2)
+end)
+|> Enum.map(&Str.priority/1)
+|> Enum.sum()
+
+input
+|> Kino.Input.read()
+|> String.split("\n")
+|> Enum.map(&String.split(&1, "", trim: true))
+|> Enum.map(&MapSet.new/1)
+|> Enum.chunk_every(3)
+|> Enum.flat_map(fn group ->
+  Enum.reduce(group, &MapSet.intersection/2)
+end)
+|> Enum.map(&Str.priority/1)
+|> Enum.sum()
 ```

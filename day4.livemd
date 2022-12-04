@@ -1,0 +1,114 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Day 4
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.7.0"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Part 1
+
+```elixir
+test_input = "2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8"
+
+defmodule Pair do
+  def parse(str) do
+    str
+    |> String.split(",")
+    |> Enum.map(&to_range/1)
+    |> Enum.map(&to_mapset/1)
+  end
+
+  defp to_range(str) do
+    str
+    |> String.split("-")
+    |> Enum.map(&String.to_integer/1)
+  end
+
+  defp to_mapset([start_range, end_range]) do
+    start_range..end_range |> MapSet.new()
+  end
+
+  def overlap?(pair_1, pair_2) do
+    cond do
+      MapSet.subset?(pair_1, pair_2) -> true
+      MapSet.subset?(pair_2, pair_1) -> true
+      true -> false
+    end
+  end
+end
+
+test_input
+|> String.split("\n")
+|> Enum.map(&Pair.parse/1)
+|> Enum.map(fn [pair1, pair2] -> Pair.overlap?(pair1, pair2) end)
+|> Enum.count(fn b -> b end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+2
+```
+
+```elixir
+input = Kino.Input.textarea("Please add your input from Advent of Code")
+```
+
+```elixir
+input
+|> Kino.Input.read()
+|> String.split("\n")
+|> Enum.map(&Pair.parse/1)
+|> Enum.map(fn [pair1, pair2] -> Pair.overlap?(pair1, pair2) end)
+|> Enum.count(fn b -> b end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+444
+```
+
+## Part 2
+
+```elixir
+test_input = "2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8"
+
+test_input
+|> String.split("\n")
+|> Enum.map(&Pair.parse/1)
+|> Enum.map(fn [pair_1, pair_2] -> !MapSet.disjoint?(pair_1, pair_2) end)
+|> Enum.count(fn b -> b end)
+
+input
+|> Kino.Input.read()
+|> String.split("\n")
+|> Enum.map(&Pair.parse/1)
+|> Enum.map(fn [pair_1, pair_2] -> !MapSet.disjoint?(pair_1, pair_2) end)
+|> Enum.count(fn b -> b end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+801
+```
